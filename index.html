@@ -3,54 +3,70 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="AI devriminin sessiz ve gürültülü kazananları. Gerçek veriler, kutlama.">
-    <meta property="og:title" content="Born by AI - Dijital Doğuş">
-    <meta property="og:description" content="AI ile doğan ve yükselen teknolojiler, platformlar ve kariyer yolları.">
-    <title>🚀 Born by AI - Dijital Doğuş</title>
+    <meta name="description" content="AI devriminin sessiz ve gürültülü kazananlarını keşfedin. Born by AI, yapay zeka ile doğan milyar dolarlık devleri ve yeni kariyer yollarını listeler.">
+    <meta name="keywords" content="AI, yapay zeka, OpenAI, NVIDIA, startup, unicorn, teknoloji, dijital dönüşüm, kariyer">
+    <meta name="author" content="Born by AI">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://bornby.ai/">
+    <meta property="og:title" content="Born by AI - Yapay Zeka ile Doğan Devler">
+    <meta property="og:description" content="AI devriminin kazananlarını keşfedin. Sıfırdan milyar dolarlara ulaşan şirketler ve yeni nesil meslekler.">
+    <meta property="og:image" content="https://bornby.ai/og-image.jpg">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://bornby.ai/">
+    <meta property="twitter:title" content="Born by AI - Yapay Zeka ile Doğan Devler">
+    <meta property="twitter:description" content="AI devriminin kazananlarını keşfedin. Sıfırdan milyar dolarlara ulaşan şirketler ve yeni nesil meslekler.">
+    <meta property="twitter:image" content="https://bornby.ai/og-image.jpg">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="favicon.png">
+    
+    <title>🚀 Born by AI - Dijital Doğuş ve AI Kazananları</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div class="particles" id="particles"></div>
 
     <!-- HEADER -->
-    <header class="site-header">
+    <header class="site-header" role="banner">
         <h1 class="logo">🚀 BORN BY AI</h1>
         <p class="tagline">Dijital Doğuş • Est. 2022</p>
         <p class="subtitle">
             AI devriminin sessiz ve gürültülü kazananlarını kutluyoruz. 
             Bir zamanlar yoklardı, şimdi milyar dolarlık devler ve yeni kariyer yolları.
         </p>
-        <div class="f-to-pay">
-            <kbd>🎉</kbd> tuşuna bas kutlama için
-        </div>
     </header>
 
     <!-- GLOBAL STATS -->
-    <section class="stats-banner counter-section">
+    <section class="stats-banner counter-section" aria-label="Global Başarı İstatistikleri">
         <div class="stat">
-            <span class="stat-number" id="days-counter">0</span>
+            <span class="stat-number" id="days-counter" aria-live="polite">0</span>
             <span class="stat-label">Gündür Hayatımızda</span>
         </div>
         <div class="stat">
-            <span class="stat-number" id="queries-counter">0</span>
+            <span class="stat-number" id="queries-counter" aria-live="polite">0</span>
             <span class="stat-label">Trilyon Sorgu</span>
         </div>
         <div class="stat">
-            <span class="stat-number" id="jobs-counter">0</span>
+            <span class="stat-number" id="jobs-counter" aria-live="polite">0</span>
             <span class="stat-label">Milyon Yeni İş</span>
         </div>
         <div class="stat">
-            <span class="stat-number" id="stackoverflow-counter">0</span>
+            <span class="stat-number" id="stackoverflow-counter" aria-live="polite">0</span>
             <span class="stat-label">Başarı Oranı</span>
         </div>
     </section>
 
     <!-- NAVIGATION TABS -->
-    <nav class="category-nav">
+    <nav class="category-nav" role="navigation" aria-label="Kategori Menüsü">
         <a href="#rocket-launches" class="nav-tab active">🚀 Roket Çıkışlar</a>
         <a href="#new-species" class="nav-tab">🧬 Yeni Türler</a>
         <a href="#phoenix" class="nav-tab">🔄 Phoenix'ler</a>
         <a href="#gold-rush" class="nav-tab">💰 Altına Hücum</a>
+        <a href="#the-shift" class="nav-tab">🌊 Büyük Dönüşüm</a>
     </nav>
 
     <main>
@@ -111,7 +127,7 @@
 
                     <footer class="grave-footer">
                         <p class="epitaph">"Big Bang" anı. Her şey buradan başladı.</p>
-                        <a href="https://finance.yahoo.com/news/openai" class="source-link" target="_blank" rel="noopener">
+                        <a href="https://finance.yahoo.com/news/openai" class="source-link" target="_blank" rel="noopener" aria-label="OpenAI finansal verilerini Yahoo Finance üzerinde görüntüle">
                             📊 Finance
                         </a>
                     </footer>
@@ -165,7 +181,7 @@
 
                     <footer class="grave-footer">
                         <p class="epitaph">"The more you buy, the more you save" - Jensen</p>
-                        <a href="https://finance.yahoo.com/quote/NVDA/" class="source-link" target="_blank" rel="noopener">
+                        <a href="https://finance.yahoo.com/quote/NVDA/" class="source-link" target="_blank" rel="noopener" aria-label="NVIDIA borsa verilerini Yahoo Finance üzerinde görüntüle">
                             📊 Yahoo Finance
                         </a>
                     </footer>
@@ -219,7 +235,7 @@
 
                     <footer class="grave-footer">
                         <p class="epitaph">"Constitutional AI" yaklaşımı kazanıyor.</p>
-                        <a href="https://www.anthropic.com" class="source-link" target="_blank" rel="noopener">
+                        <a href="https://www.anthropic.com" class="source-link" target="_blank" rel="noopener" aria-label="Anthropic web sitesini ziyaret et">
                             📊 Anthropic
                         </a>
                     </footer>
@@ -273,7 +289,7 @@
 
                     <footer class="grave-footer">
                         <p class="epitaph">"VC gereksiz" diyenler için inspirasyon.</p>
-                        <a href="https://www.theverge.com/midjourney" class="source-link" target="_blank" rel="noopener">
+                        <a href="https://www.theverge.com/midjourney" class="source-link" target="_blank" rel="noopener" aria-label="Midjourney hakkında The Verge haberini oku">
                             📊 The Verge
                         </a>
                     </footer>
@@ -327,7 +343,7 @@
 
                     <footer class="grave-footer">
                         <p class="epitaph">"10 mavi link" yerine direkt cevap kazanıyor.</p>
-                        <a href="https://www.perplexity.ai" class="source-link" target="_blank" rel="noopener">
+                        <a href="https://www.perplexity.ai" class="source-link" target="_blank" rel="noopener" aria-label="Perplexity AI web sitesini ziyaret et">
                             📊 Perplexity
                         </a>
                     </footer>
@@ -381,6 +397,9 @@
 
                     <footer class="grave-footer">
                         <p class="epitaph">"Kod yazmadan kod yazmak" gerçek oldu.</p>
+                        <a href="https://cursor.sh" class="source-link" target="_blank" rel="noopener" aria-label="Cursor IDE web sitesini ziyaret et">
+                            📊 Cursor
+                        </a>
                     </footer>
 
                     <div class="rip-banner">BORN 🎂</div>
@@ -428,6 +447,9 @@
 
                     <footer class="grave-footer">
                         <p class="epitaph">"Wrapper" hakaret değil, iş modeli.</p>
+                        <a href="https://www.ycombinator.com/companies?query=ai" class="source-link" target="_blank" rel="noopener" aria-label="Y Combinator üzerindeki AI şirketlerini listele">
+                            📊 YC AI List
+                        </a>
                     </footer>
 
                     <div class="rip-banner">BORN 🎂</div>
@@ -648,6 +670,119 @@
         </section>
 
         <!-- ==================== -->
+        <!-- SECTION 5: THE SHIFT -->
+        <!-- ==================== -->
+        <section id="the-shift" class="cemetery-section">
+            <div class="section-header">
+                <h2>🌊 Büyük Dönüşüm</h2>
+                <p>AI'dan sonra hiçbir şey eskisi gibi değil. Paradigma tamamen değişti.</p>
+            </div>
+
+            <div class="cemetery-grid">
+                
+                <!-- VIBE CODING -->
+                <article class="grave" data-status="born">
+                    <div class="killer-badge">🌊 Paradigma</div>
+                    <header class="grave-header">
+                        <div class="grave-icon">⌨️</div>
+                        <div class="grave-title">
+                            <h3>Vibe Coding</h3>
+                            <span class="grave-dates">Syntax → Intent</span>
+                        </div>
+                    </header>
+
+                    <blockquote class="death-cause">
+                        Kod yazmak artık "syntax" bilmek değil, "ne istediğini" anlatmak oldu.
+                    </blockquote>
+
+                    <div class="stats-grid">
+                        <div class="stat-box positive">
+                            <span class="value">10x</span>
+                            <span class="label">Geliştirme Hızı</span>
+                        </div>
+                        <div class="stat-box">
+                            <span class="value">0 Line</span>
+                            <span class="label">Manual Boilerplate</span>
+                        </div>
+                    </div>
+
+                    <footer class="grave-footer">
+                        <p class="epitaph">"Klavye delikanlılığı" bitti, "vibe" dönemi başladı.</p>
+                    </footer>
+
+                    <div class="rip-banner">BORN 🎂</div>
+                </article>
+
+                <!-- PERSONAL TUTORS -->
+                <article class="grave" data-status="born">
+                    <div class="killer-badge">🌊 Eğitim</div>
+                    <header class="grave-header">
+                        <div class="grave-icon">🎓</div>
+                        <div class="grave-title">
+                            <h3>7/24 Özel Mentor</h3>
+                            <span class="grave-dates">Eğitimde Eşitlik</span>
+                        </div>
+                    </header>
+
+                    <blockquote class="death-cause">
+                        Her öğrencinin cebinde dünyanın en zeki hocası var. Soru sormak artık bedava.
+                    </blockquote>
+
+                    <div class="stats-grid">
+                        <div class="stat-box positive">
+                            <span class="value">∞</span>
+                            <span class="label">Sabır Seviyesi</span>
+                        </div>
+                        <div class="stat-box positive">
+                            <span class="value">$0</span>
+                            <span class="label">Ek Ders Ücreti</span>
+                        </div>
+                    </div>
+
+                    <footer class="grave-footer">
+                        <p class="epitaph">Öğrenememek artık bir seçim.</p>
+                    </footer>
+
+                    <div class="rip-banner">BORN 🎂</div>
+                </article>
+
+                <!-- SYNTHETIC MEDIA -->
+                <article class="grave" data-status="born">
+                    <div class="killer-badge">🌊 İçerik</div>
+                    <header class="grave-header">
+                        <div class="grave-icon">🎞️</div>
+                        <div class="grave-title">
+                            <h3>Sentetik Medya</h3>
+                            <span class="grave-dates">Production → Creation</span>
+                        </div>
+                    </header>
+
+                    <blockquote class="death-cause">
+                        Kamera yok, stüdyo yok, ışık yok. Sadece hayal gücü ve bir prompt.
+                    </blockquote>
+
+                    <div class="stats-grid">
+                        <div class="stat-box positive">
+                            <span class="value">-99%</span>
+                            <span class="label">Prodüksiyon Maliyeti</span>
+                        </div>
+                        <div class="stat-box">
+                            <span class="value">∞</span>
+                            <span class="label">Yaratıcılık Sınırı</span>
+                        </div>
+                    </div>
+
+                    <footer class="grave-footer">
+                        <p class="epitaph">Gerçeklik artık bir "opsiyon".</p>
+                    </footer>
+
+                    <div class="rip-banner">BORN 🎂</div>
+                </article>
+
+            </div>
+        </section>
+
+        <!-- ==================== -->
         <!-- TIMELINE -->
         <!-- ==================== -->
         <section class="timeline-section">
@@ -727,7 +862,7 @@
             </div>
 
             <div class="footer-links">
-                <a href="https://killedby.ai" target="_blank" rel="noopener">
+                <a href="https://rip.is-app.com" target="_blank" rel="noopener">
                     🪦 Peki kim kaybetti? → Killed by AI
                 </a>
             </div>

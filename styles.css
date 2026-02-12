@@ -2476,18 +2476,23 @@ section {
 }
 
 /* Selection colors for different sections */
-#confirmed-kills ::selection {
+#rocket-launches ::selection {
     background: var(--green-primary);
     color: white;
 }
 
-#silent-victims ::selection {
+#new-species ::selection {
     background: var(--blue-primary);
     color: white;
 }
 
-#icu ::selection {
+#phoenix ::selection {
     background: var(--gold-accent);
+    color: white;
+}
+
+#the-shift ::selection {
+    background: var(--blue-light);
     color: white;
 }
 
