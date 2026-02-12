@@ -1,353 +1,775 @@
-// Animated Counter for Stats
-function animateCounter(element) {
-    const target = parseInt(element.getAttribute('data-target'));
-    const duration = 2000;
-    const increment = target / (duration / 16);
-    let current = 0;
-    
-    const updateCounter = () => {
-        current += increment;
-        if (current < target) {
-            const displayValue = Math.floor(current);
-            if (element.textContent.includes('$')) {
-                element.textContent = '$' + displayValue.toLocaleString();
-            } else {
-                element.textContent = displayValue.toLocaleString();
-            }
-            requestAnimationFrame(updateCounter);
-        } else {
-            if (element.textContent.includes('$')) {
-                element.textContent = '$' + target.toLocaleString() + (target >= 1000 ? 'B+' : '');
-            } else {
-                element.textContent = target.toLocaleString() + (target >= 100 ? '+' : 'M+');
-            }
+/* ==========================================
+   BORN BY AI - Main JavaScript
+   ==========================================
+   
+   Features:
+   - Particle system (growth sparkles)
+   - Success counter (F key → celebration)
+   - Live counters (growth metrics)
+   - Scroll animations
+   - Card entrance animations
+   - Confetti system
+   - Easter eggs
+   
+   ========================================== */
+
+(function() {
+    'use strict';
+
+    /* ==========================================
+       CONFIGURATION
+       ========================================== */
+    const CONFIG = {
+        particles: {
+            count: 50,
+            colors: ['#10b981', '#3b82f6', '#f59e0b', '#34d399'],
+            minSize: 2,
+            maxSize: 4
+        },
+        counters: {
+            chatgptLaunchDate: new Date('2022-11-30'),
+            queryMultiplier: 100, // billions per day estimate
+            jobsCreated: 15, // millions
+            successRate: 85 // percentage
+        },
+        animations: {
+            observerThreshold: 0.1,
+            staggerDelay: 100
         }
     };
-    
-    updateCounter();
-}
 
-// Initialize counters when hero section is in view
-const heroObserver = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-        if (entry.isIntersecting) {
-            const counters = document.querySelectorAll('.stat-value');
-            counters.forEach(counter => {
-                animateCounter(counter);
-            });
-            heroObserver.unobserve(entry.target);
+    /* ==========================================
+       DOM ELEMENTS
+       ========================================== */
+    const DOM = {
+        particles: null,
+        scrollTop: null,
+        successCounter: null,
+        graves: null,
+        counters: {
+            days: null,
+            queries: null,
+            jobs: null,
+            stackoverflow: null
         }
-    });
-}, { threshold: 0.5 });
+    };
 
-const hero = document.querySelector('.hero');
-if (hero) {
-    heroObserver.observe(hero);
-}
+    /* ==========================================
+       STATE
+       ========================================== */
+    const STATE = {
+        successPresses: 0,
+        particlesCreated: false,
+        countersStarted: false,
+        konamiCode: [],
+        konamiPattern: ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a']
+    };
 
-// Category Filter
-const categoryButtons = document.querySelectorAll('.category-btn');
-const categorySections = document.querySelectorAll('.category-section');
-
-categoryButtons.forEach(button => {
-    button.addEventListener('click', () => {
-        const category = button.getAttribute('data-category');
+    /* ==========================================
+       INITIALIZATION
+       ========================================== */
+    function init() {
+        cacheDOMElements();
+        createParticles();
+        setupEventListeners();
+        initScrollAnimations();
+        initNavigation();
+        startCounters();
         
-        // Update active button
-        categoryButtons.forEach(btn => btn.classList.remove('active'));
-        button.classList.add('active');
+        console.log('🌟 Born by AI initialized successfully!');
+    }
+
+    function cacheDOMElements() {
+        DOM.particles = document.getElementById('particles');
+        DOM.scrollTop = document.getElementById('scrollTop');
+        DOM.successCounter = document.getElementById('fCounter');
+        DOM.graves = document.querySelectorAll('.grave');
         
-        // Filter sections
-        categorySections.forEach(section => {
-            const sectionCategory = section.getAttribute('data-category');
-            
-            if (category === 'all') {
-                section.classList.remove('hidden');
-                // Re-trigger animations
-                const cards = section.querySelectorAll('.birth-card');
-                cards.forEach((card, index) => {
-                    card.style.animation = 'none';
-                    setTimeout(() => {
-                        card.style.animation = '';
-                    }, 10);
-                });
-            } else if (sectionCategory === category) {
-                section.classList.remove('hidden');
-                // Re-trigger animations
-                const cards = section.querySelectorAll('.birth-card');
-                cards.forEach((card, index) => {
-                    card.style.animation = 'none';
-                    setTimeout(() => {
-                        card.style.animation = '';
-                    }, 10);
-                });
-            } else {
-                section.classList.add('hidden');
-            }
+        // Counter elements
+        DOM.counters.days = document.getElementById('days-counter');
+        DOM.counters.queries = document.getElementById('queries-counter');
+        DOM.counters.jobs = document.getElementById('jobs-counter');
+        DOM.counters.stackoverflow = document.getElementById('stackoverflow-counter');
+    }
+
+    /* ==========================================
+       PARTICLE SYSTEM - GROWTH SPARKLES
+       ========================================== */
+    function createParticles() {
+        if (!DOM.particles || STATE.particlesCreated) return;
+
+        for (let i = 0; i < CONFIG.particles.count; i++) {
+            createParticle();
+        }
+
+        STATE.particlesCreated = true;
+    }
+
+    function createParticle() {
+        const particle = document.createElement('div');
+        particle.className = 'particle';
+        
+        // Random properties
+        const size = Math.random() * (CONFIG.particles.maxSize - CONFIG.particles.minSize) + CONFIG.particles.minSize;
+        const left = Math.random() * 100;
+        const delay = Math.random() * 15;
+        const duration = 15 + Math.random() * 10;
+        const color = CONFIG.particles.colors[Math.floor(Math.random() * CONFIG.particles.colors.length)];
+        
+        particle.style.cssText = `
+            left: ${left}%;
+            width: ${size}px;
+            height: ${size}px;
+            background: ${color};
+            animation-delay: ${delay}s;
+            animation-duration: ${duration}s;
+            box-shadow: 0 0 ${size * 2}px ${color};
+        `;
+        
+        DOM.particles.appendChild(particle);
+    }
+
+    /* ==========================================
+       EVENT LISTENERS
+       ========================================== */
+    function setupEventListeners() {
+        // Scroll to top button
+        window.addEventListener('scroll', handleScroll);
+        if (DOM.scrollTop) {
+            DOM.scrollTop.addEventListener('click', scrollToTop);
+        }
+
+        // Success key (F) - celebration instead of respect
+        document.addEventListener('keydown', handleKeyPress);
+
+        // Grave card hover effects
+        DOM.graves.forEach(grave => {
+            grave.addEventListener('mouseenter', handleGraveHover);
         });
+
+        // Navigation smooth scroll
+        document.querySelectorAll('.nav-tab').forEach(tab => {
+            tab.addEventListener('click', handleNavClick);
+        });
+    }
+
+    function handleScroll() {
+        const scrolled = window.pageYOffset;
         
-        // Smooth scroll to first visible section
-        setTimeout(() => {
-            const firstVisible = document.querySelector('.category-section:not(.hidden)');
-            if (firstVisible && category !== 'all') {
-                firstVisible.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        // Show/hide scroll to top button
+        if (DOM.scrollTop) {
+            if (scrolled > 500) {
+                DOM.scrollTop.classList.add('visible');
+            } else {
+                DOM.scrollTop.classList.remove('visible');
             }
-        }, 100);
-    });
-});
-
-// Intersection Observer for card animations
-const cardObserver = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-        if (entry.isIntersecting) {
-            entry.target.style.opacity = '1';
-            entry.target.style.transform = 'translateY(0)';
         }
-    });
-}, {
-    threshold: 0.1,
-    rootMargin: '0px 0px -50px 0px'
-});
 
-// Observe all cards
-const cards = document.querySelectorAll('.birth-card');
-cards.forEach(card => {
-    cardObserver.observe(card);
-});
-
-// Parallax effect for hero background
-let scrollPosition = 0;
-
-window.addEventListener('scroll', () => {
-    scrollPosition = window.pageYOffset;
-    const heroBg = document.querySelector('.hero-bg');
-    
-    if (heroBg && scrollPosition < window.innerHeight) {
-        heroBg.style.transform = `translateY(${scrollPosition * 0.5}px)`;
-        heroBg.style.opacity = 1 - (scrollPosition / window.innerHeight);
-    }
-});
-
-// Add sparkle effect on hover for cards
-cards.forEach(card => {
-    card.addEventListener('mouseenter', (e) => {
-        createSparkles(e.currentTarget);
-    });
-});
-
-function createSparkles(element) {
-    const sparkle = document.createElement('div');
-    sparkle.style.position = 'absolute';
-    sparkle.style.width = '4px';
-    sparkle.style.height = '4px';
-    sparkle.style.background = 'var(--neon-green)';
-    sparkle.style.borderRadius = '50%';
-    sparkle.style.pointerEvents = 'none';
-    sparkle.style.animation = 'sparkle 1s ease-out forwards';
-    
-    const rect = element.getBoundingClientRect();
-    sparkle.style.left = Math.random() * rect.width + 'px';
-    sparkle.style.top = Math.random() * rect.height + 'px';
-    
-    element.style.position = 'relative';
-    element.appendChild(sparkle);
-    
-    setTimeout(() => {
-        sparkle.remove();
-    }, 1000);
-}
-
-// Add sparkle animation to CSS
-const style = document.createElement('style');
-style.textContent = `
-    @keyframes sparkle {
-        0% {
-            transform: scale(0) translateY(0);
-            opacity: 1;
-        }
-        100% {
-            transform: scale(1) translateY(-20px);
-            opacity: 0;
+        // Show success counter if any presses
+        if (DOM.successCounter && STATE.successPresses > 0) {
+            if (scrolled > 200) {
+                DOM.successCounter.classList.add('visible');
+            } else {
+                DOM.successCounter.classList.remove('visible');
+            }
         }
     }
-`;
-document.head.appendChild(style);
 
-// Smooth scroll for navigation
-document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-    anchor.addEventListener('click', function (e) {
-        e.preventDefault();
-        const target = document.querySelector(this.getAttribute('href'));
-        if (target) {
-            target.scrollIntoView({
-                behavior: 'smooth',
-                block: 'start'
-            });
-        }
-    });
-});
-
-// Add typing effect to hero subtitle (optional enhancement)
-const heroSubtitle = document.querySelector('.hero-subtitle');
-if (heroSubtitle) {
-    const originalText = heroSubtitle.textContent;
-    heroSubtitle.textContent = '';
-    let charIndex = 0;
-    
-    function typeWriter() {
-        if (charIndex < originalText.length) {
-            heroSubtitle.textContent += originalText.charAt(charIndex);
-            charIndex++;
-            setTimeout(typeWriter, 50);
-        }
+    function scrollToTop() {
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
     }
-    
-    // Start typing after page load
-    setTimeout(typeWriter, 1000);
-}
 
-// Add glow effect to cards on scroll
-const glowObserver = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-        if (entry.isIntersecting) {
-            entry.target.style.boxShadow = '0 0 30px rgba(0, 255, 136, 0.3)';
+    function handleKeyPress(e) {
+        // Success key (F) - celebrates instead of paying respects
+        if (e.key === 'f' || e.key === 'F') {
+            celebrateSuccess();
+        }
+
+        // Konami code easter egg
+        STATE.konamiCode.push(e.key);
+        if (STATE.konamiCode.length > 10) {
+            STATE.konamiCode.shift();
+        }
+        checkKonamiCode();
+    }
+
+    function celebrateSuccess() {
+        STATE.successPresses++;
+        updateSuccessCounter();
+        createFloatingCelebration();
+        createConfetti();
+        
+        // Find random grave and celebrate it
+        const randomGrave = DOM.graves[Math.floor(Math.random() * DOM.graves.length)];
+        if (randomGrave) {
+            randomGrave.classList.add('respected');
             setTimeout(() => {
-                entry.target.style.boxShadow = '';
+                randomGrave.classList.remove('respected');
             }, 500);
         }
-    });
-}, { threshold: 0.5 });
+    }
 
-cards.forEach(card => {
-    glowObserver.observe(card);
-});
-
-// Dynamic gradient on mouse move for hero
-const heroContent = document.querySelector('.hero-content');
-if (heroContent) {
-    document.addEventListener('mousemove', (e) => {
-        const x = e.clientX / window.innerWidth;
-        const y = e.clientY / window.innerHeight;
-        
-        const heroBg = document.querySelector('.hero-bg');
-        if (heroBg && window.pageYOffset < window.innerHeight) {
-            heroBg.style.background = `
-                radial-gradient(circle at ${x * 100}% ${y * 100}%, rgba(0, 255, 136, 0.2) 0%, transparent 50%),
-                radial-gradient(circle at ${(1-x) * 100}% ${(1-y) * 100}%, rgba(0, 212, 255, 0.2) 0%, transparent 50%),
-                radial-gradient(circle at 50% 50%, rgba(255, 215, 0, 0.1) 0%, transparent 60%)
-            `;
+    function updateSuccessCounter() {
+        const countElement = DOM.successCounter?.querySelector('.f-count');
+        if (countElement) {
+            countElement.textContent = STATE.successPresses;
+            animateNumber(countElement);
         }
-    });
-}
+    }
 
-// Add floating animation to timeline events
-const timelineEvents = document.querySelectorAll('.timeline-event');
-timelineEvents.forEach((event, index) => {
-    event.style.animationDelay = `${index * 0.1}s`;
-});
-
-// Easter egg: Konami code
-let konamiCode = [];
-const konamiSequence = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'];
-
-document.addEventListener('keydown', (e) => {
-    konamiCode.push(e.key);
-    konamiCode = konamiCode.slice(-10);
-    
-    if (konamiCode.join('') === konamiSequence.join('')) {
-        document.body.style.animation = 'rainbow 3s linear infinite';
+    function createFloatingCelebration() {
+        const celebration = document.createElement('div');
+        celebration.className = 'floating-f';
+        celebration.textContent = '🌟';
+        celebration.style.left = `${Math.random() * 80 + 10}%`;
+        celebration.style.top = `${Math.random() * 80 + 10}%`;
+        
+        document.body.appendChild(celebration);
+        
         setTimeout(() => {
-            document.body.style.animation = '';
+            celebration.remove();
+        }, 2000);
+    }
+
+    function createConfetti() {
+        const colors = ['#10b981', '#3b82f6', '#f59e0b', '#34d399', '#60a5fa'];
+        const confettiCount = 20;
+        
+        for (let i = 0; i < confettiCount; i++) {
+            setTimeout(() => {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.left = `${Math.random() * 100}%`;
+                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.animationDelay = `${Math.random() * 0.5}s`;
+                
+                document.body.appendChild(confetti);
+                
+                setTimeout(() => {
+                    confetti.remove();
+                }, 4000);
+            }, i * 50);
+        }
+    }
+
+    function handleGraveHover(e) {
+        const grave = e.currentTarget;
+        const icon = grave.querySelector('.grave-icon');
+        
+        if (icon && !icon.querySelector('img')) {
+            // Animate emoji icons on hover
+            icon.style.transform = 'scale(1.1) rotate(5deg)';
+            setTimeout(() => {
+                icon.style.transform = '';
+            }, 300);
+        }
+    }
+
+    /* ==========================================
+       SCROLL ANIMATIONS
+       ========================================== */
+    function initScrollAnimations() {
+        const observerOptions = {
+            threshold: CONFIG.animations.observerThreshold,
+            rootMargin: '0px 0px -100px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry, index) => {
+                if (entry.isIntersecting) {
+                    setTimeout(() => {
+                        entry.target.classList.add('visible');
+                    }, index * CONFIG.animations.staggerDelay);
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        // Observe all grave cards
+        DOM.graves.forEach(grave => {
+            observer.observe(grave);
+        });
+
+        // Observe other animated elements
+        document.querySelectorAll('.collateral-card, .source-card, .timeline-item').forEach(el => {
+            observer.observe(el);
+        });
+    }
+
+    /* ==========================================
+       NAVIGATION
+       ========================================== */
+    function initNavigation() {
+        const sections = document.querySelectorAll('.cemetery-section');
+        const navTabs = document.querySelectorAll('.nav-tab');
+
+        window.addEventListener('scroll', () => {
+            let current = '';
+            
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                const sectionHeight = section.clientHeight;
+                if (window.pageYOffset >= sectionTop - 200) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            navTabs.forEach(tab => {
+                tab.classList.remove('active');
+                if (tab.getAttribute('href') === `#${current}`) {
+                    tab.classList.add('active');
+                }
+            });
+        });
+    }
+
+    function handleNavClick(e) {
+        e.preventDefault();
+        const targetId = e.currentTarget.getAttribute('href');
+        const targetSection = document.querySelector(targetId);
+        
+        if (targetSection) {
+            const offsetTop = targetSection.offsetTop - 80; // Account for sticky nav
+            window.scrollTo({
+                top: offsetTop,
+                behavior: 'smooth'
+            });
+        }
+    }
+
+    /* ==========================================
+       LIVE COUNTERS - GROWTH METRICS
+       ========================================== */
+    function startCounters() {
+        if (STATE.countersStarted) return;
+        
+        const counterSection = document.querySelector('.counter-section');
+        if (!counterSection) return;
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting && !STATE.countersStarted) {
+                    STATE.countersStarted = true;
+                    animateCounters();
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.2 });
+
+        observer.observe(counterSection);
+    }
+
+    function animateCounters() {
+        // Days since ChatGPT launch
+        const daysSince = Math.floor((new Date() - CONFIG.counters.chatgptLaunchDate) / (1000 * 60 * 60 * 24));
+        animateCounter(DOM.counters.days, 0, daysSince, 2000);
+
+        // Total queries (in trillions)
+        const totalQueries = (daysSince * CONFIG.counters.queryMultiplier / 1000).toFixed(1);
+        animateCounter(DOM.counters.queries, 0, parseFloat(totalQueries), 2000, 1);
+
+        // Jobs created (in millions)
+        animateCounter(DOM.counters.jobs, 0, CONFIG.counters.jobsCreated, 2000, 1, 'M+');
+
+        // Success rate
+        animateCounter(DOM.counters.stackoverflow, 0, CONFIG.counters.successRate, 2000, 0, '%');
+
+        // Keep updating queries in real-time
+        setInterval(() => {
+            if (DOM.counters.queries) {
+                const current = parseFloat(DOM.counters.queries.textContent);
+                const increment = 0.001; // Small increment every second
+                DOM.counters.queries.textContent = (current + increment).toFixed(1);
+            }
+        }, 1000);
+    }
+
+    function animateCounter(element, start, end, duration, decimals = 0, suffix = '') {
+        if (!element) return;
+
+        const startTime = performance.now();
+        const range = end - start;
+
+        function update(currentTime) {
+            const elapsed = currentTime - startTime;
+            const progress = Math.min(elapsed / duration, 1);
+            
+            // Easing function (ease out)
+            const easeOut = 1 - Math.pow(1 - progress, 3);
+            const current = start + (range * easeOut);
+            
+            element.textContent = current.toFixed(decimals) + suffix;
+
+            if (progress < 1) {
+                requestAnimationFrame(update);
+            } else {
+                element.textContent = end.toFixed(decimals) + suffix;
+            }
+        }
+
+        requestAnimationFrame(update);
+    }
+
+    function animateNumber(element) {
+        element.style.transform = 'scale(1.2)';
+        setTimeout(() => {
+            element.style.transform = 'scale(1)';
+        }, 200);
+    }
+
+    /* ==========================================
+       KONAMI CODE EASTER EGG
+       ========================================== */
+    function checkKonamiCode() {
+        const codeMatch = STATE.konamiCode.join(',') === STATE.konamiPattern.join(',');
+        
+        if (codeMatch) {
+            triggerPartyMode();
+            STATE.konamiCode = [];
+        }
+    }
+
+    function triggerPartyMode() {
+        document.body.classList.add('party-mode');
+        
+        // Show success message
+        showEasterEggMessage('🎉 CELEBRATION MODE ACTIVATED! 🎉');
+        
+        // Create massive confetti burst
+        for (let i = 0; i < 100; i++) {
+            setTimeout(() => {
+                createConfetti();
+            }, i * 50);
+        }
+
+        // Turn off party mode after 10 seconds
+        setTimeout(() => {
+            document.body.classList.remove('party-mode');
+        }, 10000);
+    }
+
+    function showEasterEggMessage(message) {
+        const messageEl = document.createElement('div');
+        messageEl.className = 'easter-egg-message';
+        messageEl.textContent = message;
+        
+        document.body.appendChild(messageEl);
+        
+        setTimeout(() => {
+            messageEl.style.opacity = '0';
+            setTimeout(() => {
+                messageEl.remove();
+            }, 300);
         }, 3000);
     }
-});
 
-// Rainbow animation for easter egg
-const rainbowStyle = document.createElement('style');
-rainbowStyle.textContent = `
-    @keyframes rainbow {
-        0% { filter: hue-rotate(0deg); }
-        100% { filter: hue-rotate(360deg); }
+    /* ==========================================
+       STAT BOX INTERACTIONS
+       ========================================== */
+    function initStatBoxes() {
+        const statBoxes = document.querySelectorAll('.stat-box');
+        
+        statBoxes.forEach(box => {
+            box.addEventListener('click', function() {
+                // Create a sparkle effect
+                const sparkle = document.createElement('div');
+                sparkle.textContent = '✨';
+                sparkle.style.cssText = `
+                    position: absolute;
+                    font-size: 2rem;
+                    pointer-events: none;
+                    animation: floatUp 1s ease-out forwards;
+                `;
+                
+                const rect = this.getBoundingClientRect();
+                sparkle.style.left = `${rect.left + rect.width/2}px`;
+                sparkle.style.top = `${rect.top}px`;
+                
+                document.body.appendChild(sparkle);
+                
+                setTimeout(() => {
+                    sparkle.remove();
+                }, 1000);
+            });
+        });
     }
-`;
-document.head.appendChild(rainbowStyle);
 
-// Performance: Lazy load cards
-const lazyCards = document.querySelectorAll('.birth-card');
-const lazyObserver = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-        if (entry.isIntersecting) {
-            entry.target.classList.add('loaded');
-            lazyObserver.unobserve(entry.target);
-        }
-    });
-}, {
-    rootMargin: '200px'
-});
+    /* ==========================================
+       THEME TOGGLE (if theme toggle button exists)
+       ========================================== */
+    function initThemeToggle() {
+        const themeToggle = document.querySelector('.theme-toggle');
+        if (!themeToggle) return;
 
-lazyCards.forEach(card => {
-    lazyObserver.observe(card);
-});
+        themeToggle.addEventListener('click', () => {
+            const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+            
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            
+            // Update icon
+            const sunIcon = themeToggle.querySelector('.icon-sun');
+            const moonIcon = themeToggle.querySelector('.icon-moon');
+            
+            if (sunIcon && moonIcon) {
+                if (newTheme === 'dark') {
+                    sunIcon.style.display = 'block';
+                    moonIcon.style.display = 'none';
+                } else {
+                    sunIcon.style.display = 'none';
+                    moonIcon.style.display = 'block';
+                }
+            }
+        });
 
-// Celebrate button clicks with confetti effect
-function createConfetti(x, y) {
-    for (let i = 0; i < 20; i++) {
-        const confetti = document.createElement('div');
-        confetti.style.position = 'fixed';
-        confetti.style.width = '8px';
-        confetti.style.height = '8px';
-        confetti.style.background = `hsl(${Math.random() * 360}, 100%, 50%)`;
-        confetti.style.left = x + 'px';
-        confetti.style.top = y + 'px';
-        confetti.style.borderRadius = '50%';
-        confetti.style.pointerEvents = 'none';
-        confetti.style.zIndex = '10000';
-        
-        const angle = Math.random() * Math.PI * 2;
-        const velocity = 3 + Math.random() * 5;
-        const vx = Math.cos(angle) * velocity;
-        const vy = Math.sin(angle) * velocity - 5;
-        
-        confetti.velocity = { x: vx, y: vy };
-        document.body.appendChild(confetti);
-        
-        animateConfetti(confetti);
-    }
-}
-
-function animateConfetti(confetti) {
-    let opacity = 1;
-    let y = parseFloat(confetti.style.top);
-    let x = parseFloat(confetti.style.left);
-    
-    function update() {
-        confetti.velocity.y += 0.3; // gravity
-        x += confetti.velocity.x;
-        y += confetti.velocity.y;
-        opacity -= 0.02;
-        
-        confetti.style.left = x + 'px';
-        confetti.style.top = y + 'px';
-        confetti.style.opacity = opacity;
-        
-        if (opacity > 0) {
-            requestAnimationFrame(update);
-        } else {
-            confetti.remove();
+        // Load saved theme
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme) {
+            document.documentElement.setAttribute('data-theme', savedTheme);
         }
     }
-    
-    update();
-}
 
-// Add confetti to growth badges on click
-document.querySelectorAll('.growth-badge, .salary-badge').forEach(badge => {
-    badge.addEventListener('click', (e) => {
-        e.stopPropagation();
-        createConfetti(e.clientX, e.clientY);
+    /* ==========================================
+       FORM VALIDATION (if submit form exists)
+       ========================================== */
+    function initFormValidation() {
+        const forms = document.querySelectorAll('form');
+        
+        forms.forEach(form => {
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // Show success message
+                showEasterEggMessage('✅ Submission received! Thank you for contributing! 🙏');
+                
+                // Create success confetti
+                createConfetti();
+                
+                // Reset form
+                setTimeout(() => {
+                    form.reset();
+                }, 1000);
+            });
+        });
+    }
+
+    /* ==========================================
+       TOOLTIP SYSTEM
+       ========================================== */
+    function initTooltips() {
+        const tooltipElements = document.querySelectorAll('[data-tooltip]');
+        
+        tooltipElements.forEach(el => {
+            el.addEventListener('mouseenter', function() {
+                const tooltip = this.getAttribute('data-tooltip');
+                this.style.position = 'relative';
+            });
+        });
+    }
+
+    /* ==========================================
+       COPY TO CLIPBOARD
+       ========================================== */
+    function initCopyButtons() {
+        const codeBlocks = document.querySelectorAll('code');
+        
+        codeBlocks.forEach(code => {
+            if (code.textContent.length > 20) {
+                code.style.cursor = 'pointer';
+                code.title = 'Click to copy';
+                
+                code.addEventListener('click', function() {
+                    const text = this.textContent;
+                    navigator.clipboard.writeText(text).then(() => {
+                        showToast('✅ Copied to clipboard!', 'success');
+                    });
+                });
+            }
+        });
+    }
+
+    /* ==========================================
+       TOAST NOTIFICATIONS
+       ========================================== */
+    function showToast(message, type = 'success') {
+        const toast = document.createElement('div');
+        toast.className = `toast ${type}`;
+        
+        const icon = type === 'success' ? '✅' : 
+                     type === 'error' ? '❌' : 
+                     type === 'warning' ? '⚠️' : 'ℹ️';
+        
+        toast.innerHTML = `
+            <span class="toast-icon">${icon}</span>
+            <span class="toast-message">${message}</span>
+            <button class="toast-close">×</button>
+        `;
+        
+        let container = document.querySelector('.toast-container');
+        if (!container) {
+            container = document.createElement('div');
+            container.className = 'toast-container';
+            document.body.appendChild(container);
+        }
+        
+        container.appendChild(toast);
+        
+        // Auto remove after 3 seconds
+        const timeout = setTimeout(() => {
+            removeToast(toast);
+        }, 3000);
+        
+        // Manual close
+        const closeBtn = toast.querySelector('.toast-close');
+        closeBtn.addEventListener('click', () => {
+            clearTimeout(timeout);
+            removeToast(toast);
+        });
+    }
+
+    function removeToast(toast) {
+        toast.classList.add('removing');
+        setTimeout(() => {
+            toast.remove();
+        }, 300);
+    }
+
+    /* ==========================================
+       PERFORMANCE MONITORING
+       ========================================== */
+    function logPerformance() {
+        if (window.performance) {
+            const perfData = window.performance.timing;
+            const pageLoadTime = perfData.loadEventEnd - perfData.navigationStart;
+            
+            console.log(`🚀 Page loaded in ${pageLoadTime}ms`);
+        }
+    }
+
+    /* ==========================================
+       ACCESSIBILITY ENHANCEMENTS
+       ========================================== */
+    function initAccessibility() {
+        // Skip link
+        const skipLink = document.createElement('a');
+        skipLink.href = '#main';
+        skipLink.className = 'skip-link';
+        skipLink.textContent = 'Skip to main content';
+        document.body.insertBefore(skipLink, document.body.firstChild);
+
+        // Keyboard navigation for cards
+        DOM.graves.forEach(grave => {
+            grave.setAttribute('tabindex', '0');
+            grave.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    grave.click();
+                }
+            });
+        });
+    }
+
+    /* ==========================================
+       LAZY LOADING IMAGES
+       ========================================== */
+    function initLazyLoading() {
+        const images = document.querySelectorAll('img[data-src]');
+        
+        const imageObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const img = entry.target;
+                    img.src = img.dataset.src;
+                    img.removeAttribute('data-src');
+                    imageObserver.unobserve(img);
+                }
+            });
+        });
+
+        images.forEach(img => imageObserver.observe(img));
+    }
+
+    /* ==========================================
+       ANALYTICS (Privacy-friendly)
+       ========================================== */
+    function trackEvent(eventName, eventData = {}) {
+        // Simple console logging for now
+        // Replace with your analytics solution
+        console.log(`📊 Event: ${eventName}`, eventData);
+    }
+
+    /* ==========================================
+       MOBILE MENU TOGGLE
+       ========================================== */
+    function initMobileMenu() {
+        const nav = document.querySelector('.category-nav');
+        if (!nav) return;
+
+        // Create mobile menu toggle button
+        if (window.innerWidth <= 768) {
+            const menuToggle = document.createElement('button');
+            menuToggle.className = 'mobile-menu-toggle';
+            menuToggle.innerHTML = '☰';
+            menuToggle.setAttribute('aria-label', 'Toggle menu');
+            
+            nav.parentElement.insertBefore(menuToggle, nav);
+            
+            menuToggle.addEventListener('click', () => {
+                nav.classList.toggle('mobile-open');
+                menuToggle.innerHTML = nav.classList.contains('mobile-open') ? '×' : '☰';
+            });
+        }
+    }
+
+    /* ==========================================
+       MAIN ENTRY POINT
+       ========================================== */
+    // Wait for DOM to be ready
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+    } else {
+        init();
+    }
+
+    // Additional initializations after load
+    window.addEventListener('load', () => {
+        initStatBoxes();
+        initThemeToggle();
+        initFormValidation();
+        initTooltips();
+        initCopyButtons();
+        initAccessibility();
+        initLazyLoading();
+        initMobileMenu();
+        logPerformance();
+        
+        console.log('🎉 All systems ready!');
     });
-});
 
-console.log('🚀 Born by AI - Where winners are celebrated!');
-console.log('💰 Built with HTML, CSS, and JavaScript');
-console.log('✨ Try the Konami code for a surprise!');
+    /* ==========================================
+       ERROR HANDLING
+       ========================================== */
+    window.addEventListener('error', (e) => {
+        console.error('⚠️ Runtime error:', e.error);
+        trackEvent('error', {
+            message: e.error.message,
+            stack: e.error.stack
+        });
+    });
+
+    /* ==========================================
+       EXPORT FOR DEBUGGING
+       ========================================== */
+    window.BornByAI = {
+        version: '1.0.0',
+        state: STATE,
+        config: CONFIG,
+        celebrateSuccess,
+        triggerPartyMode,
+        showToast
+    };
+
+})();
